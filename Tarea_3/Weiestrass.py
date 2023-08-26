@@ -27,7 +27,7 @@ ax.plot_surface(x, y, z, cmap='viridis')
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Z')
-ax.set_title('Función de Wierstrass en 3D')
+ax.set_title('Función de Weiestrass en 3D')
 
 # Mostrar la gráfica
 plt.show()

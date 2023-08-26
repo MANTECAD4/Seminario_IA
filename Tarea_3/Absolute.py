@@ -16,7 +16,7 @@ y = np.linspace(-600, 600, 1000)
 x, y = np.meshgrid(x, y)  # Crea una malla de valores X e Y para usar en la gráfica
 
 # Calcula los valores Z para una superficie en función de los valores X e Y
-z = -(y + 47) * np.sin(np.sqrt(np.abs(y + x/2 + 47))) - x * np.sin(np.sqrt(np.abs(x - (y + 47))))
+z = np.abs(x)+np.abs(y)
 
 # Crear una figura en 3D
 fig = plt.figure()  # Crea una figura para la gráfica
@@ -29,7 +29,7 @@ surface = ax.plot_surface(x, y, z, cmap='viridis')  # Crea la gráfica de superf
 ax.set_xlabel('X')  # Agrega etiqueta al eje X
 ax.set_ylabel('Y')  # Agrega etiqueta al eje Y
 ax.set_zlabel('Z')  # Agrega etiqueta al eje Z
-ax.set_title('Gráfica de la función EggHolder en 3D')  # Agrega un título a la gráfica
+ax.set_title('Gráfica de la función Absolute en 3D')  # Agrega un título a la gráfica
 
 # Mostrar la gráfica
 plt.show()  # Muestra la gráfica en una ventana emergente
