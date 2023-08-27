@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D  # Importa la herramienta 3D de Matplotlib
 
 # Crear datos de ejemplo: genera arreglos de valores X e Y, y crea una malla (grid) X-Y
-x = np.linspace(-600, 600, 1000)  # Crea 100 valores equidistantes en el rango -5 a 5
-y = np.linspace(-600, 600, 1000)
+x = np.linspace(-10, 10, 50)  # Crea 50 valores equidistantes en el rango -10 a 10
+y = np.linspace(-10, 10, 50)
 x, y = np.meshgrid(x, y)  # Crea una malla de valores X e Y para usar en la gráfica
 
 z = x**2 + y**2  # Coordenada z en función de theta
