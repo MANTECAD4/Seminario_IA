@@ -15,6 +15,7 @@ y = np.linspace(-0.5, 0.5, 150)
 x, y = np.meshgrid(x, y)
 z = wierstrass(x, y, a=0.5, b=3, k_max=20)
 
+print(z.min())
 ax.plot_surface(x, y, z, cmap='viridis')
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
