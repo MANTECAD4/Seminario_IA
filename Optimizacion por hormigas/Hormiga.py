@@ -9,15 +9,15 @@ def Weierstrass(x, y, a, b, k_max):
     return result
 
 # Parámetros de la optimización por colonia de hormigas
-num_hormigas = 10
-num_iteraciones = 60
+num_hormigas = 50
+num_iteraciones = 100
 alpha = 1.0  
 beta = 1.5   
 evaporacion = 0.5
 
 # Espacio de búsqueda discretizado
-rango_x = np.linspace(-0.5, 0.5, 150)
-rango_y = np.linspace(-0.5, 0.5, 150)
+rango_x = np.linspace(-0.5, 0.5, 200)
+rango_y = np.linspace(-0.5, 0.5, 200)
 x_grid, y_grid = np.meshgrid(rango_x, rango_y)
 
 # Inicialización de feromonas en cada celda
@@ -69,7 +69,7 @@ for iteracion in range(num_iteraciones):
         feromonas[x_idx, y_idx] += 1.0 / (cost + 1e-6)  
     best_costs.append(mejor_costo)
 
-# Grafica de la función Weierstrass y la mejor solución encontrada
+# Grafica de la función Weierstrass y la evolución de la mejor solución encontrada
 plt.plot(range(num_iteraciones), best_costs)
 plt.xlabel('Iteración')
 plt.ylabel('Mejor Costo')
