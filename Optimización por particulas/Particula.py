@@ -2,103 +2,112 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Función Weierstrass
-def Weierstrass(x, y, a, b, k_max):
+# Función Weierstrass como objetivo
+def funcion_objetivo(x, y, a, b, k_max):
     result = 0
     for k in range(k_max):
         result += (a**k * np.cos(2 * np.pi * b**k * (x + 0.5)) - a**k*np.cos(np.pi*b**k)) + (a**k * np.cos(2 * np.pi * b**k * (y + 0.5)) - a**k*np.cos(np.pi*b**k))
     return result
 
 # Parámetros de PSO
-num_particulas = 30         #Numero de particulas
-num_iteraciones = 100       #Numero de iteraciones
-lb = 0.5                    #Limite superior
-ub = -0.5                   #Limite inferior
-num_puntos=150              #Numero de puntos del espacio discretizado
-w_max = 0.9                 #Coeficientes de incercia
+num_particulas = 30         # Numero de particulas
+num_iteraciones = 100       # Numero de iteraciones
+lb = 0.5                    # Limite superior
+ub = -0.5                   # Limite inferior
+num_puntos = 1000            # Numero de puntos del espacio discretizado
+w_max = 0.9                 # Coeficientes de incercia
 w_min = 0.2
-c1, c2 = 2,2            #Coeficientes de atracción personal y social
-vMax = (ub - lb) * 0.2      #Velocidad máxima
-vMin  = -vMax               #Velocidad mínima
+c1, c2 = 2,2                # Coeficientes de atracción personal y social
+vMax = (lb - ub) * 0.2      # Velocidad máxima
+vMin  = -vMax               # Velocidad mínima
 
-# Espacio de búsqueda discretizado
 rango_x = np.linspace(ub, lb, num_puntos)
 rango_y = np.linspace(ub, lb, num_puntos)
 x_grid, y_grid = np.meshgrid(rango_x, rango_y)
-z = Weierstrass(x_grid, y_grid, a=0.5, b=3, k_max=20)
+z = funcion_objetivo(x_grid, y_grid, a=0.5, b=3, k_max=20)
 
-#Iniciliaización de las partículas
+# Iniciliaización de las partículas
 particulas = []
 for i in range(num_particulas):
     particula = {
         'actual':{'x': np.random.choice(rango_x), 'y': np.random.choice(rango_y), 'z': float('inf')},
-        'pbest':{'x': None, 'y': None, 'z': float('inf')},
+        'pbest':{'x': np.random.choice(rango_x), 'y': np.random.choice(rango_y), 'z': float('inf')},
         'velocidad': {'v_x': 0.0, 'v_y': 0.0}
     }
     particulas.append(particula)
 
-gbest = {'x': None, 'y': None, 'z': float('inf')}
+gbest = {'x': np.random.choice(rango_x), 'y': np.random.choice(rango_y), 'z': float('inf')}
 mejores_costos = []
+
 # Bucle de optimización por enjambre de particulas
 for iteracion in range(num_iteraciones):
     
-    for i in particulas:
+    for particula in particulas:
 
-        i['actual']['z'] = Weierstrass(i['actual']['x'], i['actual']['y'], a=0.5, b=3, k_max=20)
-
-        if( i['actual']['z'] < i['pbest']['z'] ):
-            i['pbest'] = i['actual'].copy()
-            #i['pbest']['x'], i['pbest']['y'], i['pbest']['z'] = i['actual']['x'], i['actual']['y'], i['actual']['z']
-
-        if( i['pbest']['z'] < gbest['z'] ):
-            gbest = i['actual'].copy()
-            #gbest['x'], gbest['y'], gbest['z'] = i['actual']['x'], i['actual']['y'], i['actual']['z']
-        
+        # Cálculo de la nueva velocidad
         w = w_max - (w_max - w_min) * iteracion / num_iteraciones
         r1 = np.random.rand()
         r2 = np.random.rand()
-
-        # Cálculo de la nueva velocidad
-        i['velocidad']['v_x'] = w * i['velocidad']['v_x'] + c1 * r1 * (i['pbest']['x'] - i['actual']['x']) + c2 * r2 * (gbest['x'] - i['actual']['x'])
-        i['velocidad']['v_y'] = w * i['velocidad']['v_y'] + c1 * r1 * (i['pbest']['y'] - i['actual']['y']) + c2 * r2 * (gbest['y'] - i['actual']['y'])
-
-        # Actualización de la posición basada en la nueva velocidad
-        i['actual']['x'] += i['velocidad']['v_x']
-        i['actual']['y'] += i['velocidad']['v_y']
+        
+        particula['velocidad']['v_x'] = w * particula['velocidad']['v_x'] + c1 * r1 * (particula['pbest']['x'] - particula['actual']['x']) + c2 * r2 * (gbest['x'] - particula['actual']['x'])
+        particula['velocidad']['v_y'] = w * particula['velocidad']['v_y'] + c1 * r1 * (particula['pbest']['y'] - particula['actual']['y']) + c2 * r2 * (gbest['y'] - particula['actual']['y'])
 
         # Aplicar límites a la velocidad en las dimensiones x e y
-        i['velocidad']['v_x'] = max(min(i['velocidad']['v_x'], vMax), vMin)
-        i['velocidad']['v_y'] = max(min(i['velocidad']['v_y'], vMax), vMin)
-
+        particula['velocidad']['v_x'] = max(min(particula['velocidad']['v_x'], vMax), vMin)
+        particula['velocidad']['v_y'] = max(min(particula['velocidad']['v_y'], vMax), vMin)
+        
+        # Actualización de la posición basada en la nueva velocidad
+        particula['actual']['x'] += particula['velocidad']['v_x']
+        particula['actual']['y'] += particula['velocidad']['v_y']
+        
         # Aplicar límites de posición en las dimensiones x e y
-        i['actual']['x'] = max(i['actual']['x'], ub)
-        i['actual']['x'] = min(i['actual']['x'], lb)
+        particula['actual']['x'] = max(min(particula['actual']['x'], lb), ub)
+        particula['actual']['y'] = max(min(particula['actual']['y'], lb), ub)
 
-        i['actual']['y'] = max(i['actual']['y'], ub)
-        i['actual']['y'] = min(i['actual']['y'], lb)
+        # Evaluación de la particula
+        particula['actual']['z'] = funcion_objetivo(particula['actual']['x'], particula['actual']['y'], a=0.5, b=3, k_max=20)
+
+        # Actualización de mejor experiencia personal
+        if( particula['actual']['z'] < particula['pbest']['z'] ):
+            particula['pbest'] = particula['actual'].copy()
+
+        #Actualización de mejor experiencia global
+        if( particula['pbest']['z'] < gbest['z'] ):
+            gbest = particula['actual'].copy()
     
     mejores_costos.append(gbest['z'])
 
-# Grafica de la función Weierstrass y la evolución de la mejor solución encontrada
+# Redondeo de las coordenadas de la mejor solución
+redondeo_x = min(rango_x, key=lambda x: abs(x - gbest['x']))
+redondeo_y = min(rango_y, key=lambda y: abs(y - gbest['y']))
+
+# Establecer la posición de la partícula en las coordenadas más cercanas
+gbest['x'] = redondeo_x
+gbest['y'] = redondeo_y
+gbest['z'] = funcion_objetivo(gbest['x'], gbest['y'], a=0.5, b=3, k_max=20)
+
+# Grafica de la función funcion_objetivo y la evolución de la mejor solución encontrada
 plt.plot(range(num_iteraciones), mejores_costos)
 plt.xlabel('Iteración')
 plt.ylabel('Mejor Costo')
 plt.title('Evolución del Mejor Costo en Cada Iteración')
 plt.grid(True)
 
-
+# Se muestran los resultados del algoritmo
 print("Mejor solución encontrada:")
 print(f"X: {gbest['x']}")
 print(f"Y: {gbest['y']}")
 print(f"Z: {gbest['z']}")
-print("Valor optimo: ", z.min())
+print("Valor óptimo: ", z.min())
+
+# Grafica de la función Weierstrass en 3D con gbest marcada 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 surface = ax.plot_surface(x_grid, y_grid, z, cmap='viridis')
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Z')
-ax.set_title('Gráfica de la función Weierstrass minimizada por PSO')
+ax.set_title('Gráfica de la función funcion_objetivo minimizada por PSO')
 ax.scatter(gbest['x'], gbest['y'], gbest['z'] , color='red', marker='o', s=100, label='Mejor Solución')
 
 plt.legend()
