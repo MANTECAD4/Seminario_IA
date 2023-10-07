@@ -17,7 +17,7 @@ ub = -0.5                   #Limite inferior
 num_puntos=150              #Numero de puntos del espacio discretizado
 w_max = 0.9                 #Coeficientes de incercia
 w_min = 0.2
-c1, c2 = 0.5,0.5            #Coeficientes de atracción personal y social
+c1, c2 = 2,2            #Coeficientes de atracción personal y social
 vMax = (ub - lb) * 0.2      #Velocidad máxima
 vMin  = -vMax               #Velocidad mínima
 
@@ -66,6 +66,17 @@ for iteracion in range(num_iteraciones):
         i['actual']['x'] += i['velocidad']['v_x']
         i['actual']['y'] += i['velocidad']['v_y']
 
+        # Aplicar límites a la velocidad en las dimensiones x e y
+        i['velocidad']['v_x'] = max(min(i['velocidad']['v_x'], vMax), vMin)
+        i['velocidad']['v_y'] = max(min(i['velocidad']['v_y'], vMax), vMin)
+
+        # Aplicar límites de posición en las dimensiones x e y
+        i['actual']['x'] = max(i['actual']['x'], ub)
+        i['actual']['x'] = min(i['actual']['x'], lb)
+
+        i['actual']['y'] = max(i['actual']['y'], ub)
+        i['actual']['y'] = min(i['actual']['y'], lb)
+    
     mejores_costos.append(gbest['z'])
 
 # Grafica de la función Weierstrass y la evolución de la mejor solución encontrada
@@ -81,7 +92,6 @@ print(f"X: {gbest['x']}")
 print(f"Y: {gbest['y']}")
 print(f"Z: {gbest['z']}")
 print("Valor optimo: ", z.min())
-
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 surface = ax.plot_surface(x_grid, y_grid, z, cmap='viridis')
