@@ -6,7 +6,10 @@ class Individuo :
         self.posicion = []
         self.costo = float('inf')
 # Función Weierstrass como objetivo
-def funcion_objetivo(x, y, a, b, k_max):
+def funcion_objetivo(x, y):
+    a=0.5
+    b=3
+    k_max=20
     result = 0
     for k in range(k_max):
         result += (a**k * np.cos(2 * np.pi * b**k * (x + 0.5)) - a**k*np.cos(np.pi*b**k)) + (a**k * np.cos(2 * np.pi * b**k * (y + 0.5)) - a**k*np.cos(np.pi*b**k))
@@ -32,7 +35,7 @@ poblacion = []
 for i in range(nPop):
     ind = Individuo()
     ind.posicion = np.random.uniform(vMin, vMax, 2)
-    ind.costo = funcion_objetivo(ind.posicion[0], ind.posicion[1], a=0.5, b=3, k_max=20)
+    ind.costo = funcion_objetivo(ind.posicion[0], ind.posicion[1])
     poblacion.append(ind)
 
 mejor_solucion = Individuo()
@@ -60,10 +63,11 @@ for iteracion in range(num_iteraciones):
                 u[j] = v[j]
             else:
                 u[j] = poblacion[i].posicion[j]
+                
         # Evaluacion del nuevo individuo
         nueva_solucion = Individuo()
         nueva_solucion.posicion = u.copy()
-        nueva_solucion.costo = funcion_objetivo(nueva_solucion.posicion[0], nueva_solucion.posicion[1], a=0.5, b=3, k_max=20)
+        nueva_solucion.costo = funcion_objetivo(nueva_solucion.posicion[0], nueva_solucion.posicion[1])
 
         # Comparacion entre el individuo actual y el nuevo
         if nueva_solucion.costo < poblacion[i].costo:
@@ -80,7 +84,7 @@ redondeo_y = min(rango_y, key=lambda y: abs(y - mejor_solucion.posicion[1]))
 # Establecer la posición de la partícula en las coordenadas más cercanas
 mejor_solucion.posicion[0] = redondeo_x
 mejor_solucion.posicion[1] = redondeo_y
-mejor_solucion.costo = funcion_objetivo(mejor_solucion.posicion[0], mejor_solucion.posicion[1], a=0.5, b=3, k_max=20)
+mejor_solucion.costo = funcion_objetivo(mejor_solucion.posicion[0], mejor_solucion.posicion[1])
 
 # Grafica de la función funcion_objetivo y la evolución de la mejor solución encontrada
 plt.plot(range(num_iteraciones), mejores_costos)
