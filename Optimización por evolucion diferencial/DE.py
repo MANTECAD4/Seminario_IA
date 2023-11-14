@@ -28,7 +28,7 @@ pCR = 0.2                   # Probabilidad de cruza
 rango_x = np.linspace(vMin, vMax, num_puntos)
 rango_y = np.linspace(vMin, vMax, num_puntos)
 x_grid, y_grid = np.meshgrid(rango_x, rango_y)
-z = funcion_objetivo(x_grid, y_grid, a=0.5, b=3, k_max=20)
+z = funcion_objetivo(x_grid, y_grid)
 
 # Iniciliaizaciones
 poblacion = []
